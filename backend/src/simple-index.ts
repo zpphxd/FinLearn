@@ -1,40 +1,41 @@
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import compression from 'compression';
-import morgan from 'morgan';
-import rateLimit from 'express-rate-limit';
-import dotenv from 'dotenv';
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+const compression = require('compression');
+const morgan = require('morgan');
+const helmet = require('helmet');
+const dotenv = require('dotenv');
 
-// Import simplified auth routes
-import authRoutes from './routes/simple-auth';
-import jwt from 'jsonwebtoken';
-import { users } from './shared/users';
+// Types
+const jwt = require('jsonwebtoken');
 
 // Load environment variables
 dotenv.config();
 
+// Import shared utilities
+import { users } from './shared/users';
+
 const app = express();
 const PORT = 5001;
 
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.',
-});
-
 // Middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: process.env.NODE_ENV === 'production',
+  crossOriginEmbedderPolicy: false
+}));
+
+// CORS configuration
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://finlearn.vercel.app', 'https://finlearn-*.vercel.app']
-    : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:3003'],
+    ? [process.env.FRONTEND_URL, 'https://finlearn-app.vercel.app']
+    : true,
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
 app.use(compression());
 app.use(morgan('combined'));
-app.use(limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -47,8 +48,95 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// API Routes
-app.use('/api/auth', authRoutes);
+// Auth endpoints
+app.post('/api/auth/login', (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email and password are required'
+      });
+    }
+
+    // Demo login for deployment testing
+    if (email === 'demo@finlearn.com' && password === 'demo123') {
+      const token = jwt.sign(
+        { userId: 'demo-user', email: 'demo@finlearn.com' },
+        process.env.JWT_SECRET || 'dev_super_secret_jwt_key_change_in_production_123456789',
+        { expiresIn: '7d' }
+      );
+
+      return res.json({
+        success: true,
+        token,
+        user: {
+          id: 'demo-user',
+          email: 'demo@finlearn.com',
+          name: 'Demo User',
+          xp: 150,
+          level: 2,
+          coins: 45,
+          streak: 3
+        }
+      });
+    }
+
+    return res.status(401).json({
+      success: false,
+      error: 'Invalid credentials'
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Server error'
+    });
+  }
+});
+
+app.get('/api/auth/me', (req, res) => {
+  const authHeader = req.headers.authorization;
+  
+  if (!authHeader) {
+    return res.status(401).json({
+      success: false,
+      error: 'No token provided'
+    });
+  }
+
+  try {
+    const token = authHeader.split(' ')[1];
+    const secret = process.env.JWT_SECRET || 'dev_super_secret_jwt_key_change_in_production_123456789';
+    const decoded = jwt.verify(token, secret) as any;
+
+    return res.json({
+      success: true,
+      user: {
+        id: decoded.userId,
+        email: decoded.email,
+        name: 'Demo User',
+        xp: 150,
+        level: 2,
+        coins: 45,
+        streak: 3
+      }
+    });
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      error: 'Invalid token'
+    });
+  }
+});
+
+app.post('/api/auth/logout', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Logged out successfully'
+  });
+});
 
 // Comprehensive lesson data with Mountain Hiker Theme
 const lessonData = {
