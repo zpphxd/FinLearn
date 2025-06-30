@@ -295,7 +295,7 @@ export const MountainProgression: React.FC<MountainProgressionProps> = ({
             })}
 
             {/* Stage Markers */}
-            {trailPoints.map((point, index) => {
+            {trailPoints.map((point, _index) => {
               const stage = point.stage;
               const isCompleted = progressionData.currentXP >= stage.xpRequired;
               const isCurrent = progressionData.currentStage.stage === stage.stage;

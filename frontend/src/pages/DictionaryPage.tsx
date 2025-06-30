@@ -79,7 +79,7 @@ const vocabularyData: VocabTerm[] = [
 ];
 
 export const DictionaryPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user: _user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [filteredTerms, setFilteredTerms] = useState<VocabTerm[]>(vocabularyData);

@@ -130,7 +130,7 @@ export const ProfilePage: React.FC = () => {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Achievements</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {achievements.map((achievement, index) => (
+            {achievements.map((achievement, _index) => (
               <div
                 key={achievement.name}
                 className={`p-4 rounded-lg border-2 ${

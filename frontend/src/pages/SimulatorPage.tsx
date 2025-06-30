@@ -8,7 +8,6 @@ import {
   HomeIcon,
   GraduationCapIcon,
   PiggyBankIcon,
-  MessageCircleIcon,
   PlayIcon
 } from 'lucide-react';
 
@@ -87,7 +86,7 @@ const scenarios: Scenario[] = [
 ];
 
 export const SimulatorPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user: _user } = useAuth();
   const [selectedScenario, setSelectedScenario] = useState<string | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
 

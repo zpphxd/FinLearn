@@ -150,7 +150,7 @@ export const HomePage: React.FC = () => {
                   { emoji: '🏖️', name: 'Retirement Valley', elevation: '7,200 ft', difficulty: 'Advanced' },
                   { emoji: '🏠', name: 'Real Estate Summit', elevation: '9,500 ft', difficulty: 'Expert' },
                   { emoji: '🎯', name: 'Freedom Peak', elevation: '12,000 ft', difficulty: 'Master' },
-                ].map((summit, index) => (
+                ].map((summit, _index) => (
                   <div
                     key={summit.name}
                     className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-2 border border-white/20"

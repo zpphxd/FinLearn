@@ -220,7 +220,7 @@ interface VocabularyWordProps {
 
 const VocabularyWord: React.FC<VocabularyWordProps> = ({
   term,
-  termKey,
+  termKey: _termKey,
   isNew,
   definition,
   lessonTitle,

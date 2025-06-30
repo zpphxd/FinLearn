@@ -74,7 +74,7 @@ export const LessonPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showMountainProgress, setShowMountainProgress] = useState(false);
   const [completionData, setCompletionData] = useState<any>(null);
-  const [discoveredVocab, setDiscoveredVocab] = useState<Array<{ term: string; definition: string; category: string; fromLesson: string }>>([]);
+  const [_discoveredVocab, setDiscoveredVocab] = useState<Array<{ term: string; definition: string; category: string; fromLesson: string }>>([]);
 
   // Get world ID from lesson ID (assumes format like "budgeting_1", "credit_2", etc.)
   const getWorldIdFromLesson = (lessonId: string): string => {

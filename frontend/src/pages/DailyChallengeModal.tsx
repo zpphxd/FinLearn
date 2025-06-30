@@ -39,7 +39,7 @@ const todaysChallenge: Challenge = {
 };
 
 export const DailyChallengeModal: React.FC<DailyChallengeModalProps> = ({ isOpen, onClose }) => {
-  const { user } = useAuth();
+  const { user: _user } = useAuth();
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [hasAnswered, setHasAnswered] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);

@@ -24,7 +24,7 @@ export const LeaderboardPage: React.FC = () => {
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Top Learners This Month</h2>
           
           <div className="space-y-4">
-            {leaderboardData.map((user, index) => (
+            {leaderboardData.map((user, _index) => (
               <div
                 key={user.rank}
                 className={`flex items-center justify-between p-4 rounded-lg border ${
