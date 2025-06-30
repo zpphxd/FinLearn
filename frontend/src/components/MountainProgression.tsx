@@ -29,6 +29,13 @@ interface MountainProgressionProps {
   onClose: () => void;
 }
 
+interface TrailPoint {
+  x: number;
+  y: number;
+  stage: MountainStage;
+  index: number;
+}
+
 export const MountainProgression: React.FC<MountainProgressionProps> = ({
   worldId,
   worldTitle,
@@ -37,37 +44,40 @@ export const MountainProgression: React.FC<MountainProgressionProps> = ({
   onClose
 }) => {
   const [progressionData, setProgressionData] = useState<ProgressionData | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [selectedStage, setSelectedStage] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchProgressionData = async () => {
     try {
       setLoading(true);
       const response = await apiClient.get(`/worlds/${worldId}/progression`);
       setProgressionData(response.data.data);
-    } catch (error) {
-      console.error('Error fetching progression data:', error);
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to load progression data');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && worldId) {
       fetchProgressionData();
     }
   }, [isOpen, worldId]);
 
   if (!isOpen) return null;
 
-  const getTrailPathPoints = (allStages: MountainStage[]) => {
+  const getTrailPathPoints = (allStages: MountainStage[]): TrailPoint[] => {
+    if (!allStages || allStages.length === 0) return [];
+    
+    const baseX = 50;  // Start from left
     const baseY = 400; // Bottom of mountain
-    const peakY = 80;  // Top of mountain
-    const baseX = 50;  // Left edge
     const peakX = 350; // Right edge
-    
-    const points = [];
-    
+    const peakY = 150; // Top of mountain
+
+    const points: TrailPoint[] = [];
+
     allStages.forEach((stage, index) => {
       const progress = index / (allStages.length - 1);
       
@@ -82,11 +92,11 @@ export const MountainProgression: React.FC<MountainProgressionProps> = ({
       
       points.push({ x, y, stage, index });
     });
-    
+
     return points;
   };
 
-  const getPathProgress = (currentXP: number, allStages: MountainStage[], points: any[]) => {
+  const getPathProgress = (currentXP: number, allStages: MountainStage[], points: TrailPoint[]) => {
     if (!allStages || allStages.length === 0) return 0;
     
     // Find current stage index

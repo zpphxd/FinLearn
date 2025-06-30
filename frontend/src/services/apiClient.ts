@@ -2,8 +2,19 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { refreshToken } from './authService';
 
 // Create axios instance
+const getBaseURL = () => {
+  // Check for Vite environment variable
+  const viteApiUrl = (import.meta as any).env?.VITE_API_URL;
+  if (viteApiUrl) {
+    return viteApiUrl;
+  }
+  
+  // Fallback to localhost for development
+  return 'http://localhost:5001/api';
+};
+
 export const apiClient: AxiosInstance = axios.create({
-  baseURL: 'http://localhost:5001/api',
+  baseURL: getBaseURL(),
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

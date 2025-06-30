@@ -1,0 +1,10 @@
+{
+  "name": "finlearn-api",
+  "version": "1.0.0",
+  "description": "FinLearn API for Vercel deployment",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  }
+} 
